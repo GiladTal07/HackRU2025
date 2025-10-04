@@ -1,0 +1,5 @@
+Flask
+subprocess
+pathlib
+google.genai
+dotenv
