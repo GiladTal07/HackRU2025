@@ -333,17 +333,17 @@ try:
     # Ensure mapping variable exists for downstream inline steps
     mapping = matched if 'matched' in locals() else []
     # --- New: create an inline-coded markdown where course lines contain matched codes ---
+    # First-pass: replace Recommended Courses (or similar) block inline
     try:
-        # use in-memory mapping from the previous step
         mapping = matched if 'matched' in locals() else []
-        rec_to_code = {m['recommended']: (m['matched_code'] or '').strip() for m in mapping}
+        rec_to_code = {m['recommended']: (m.get('matched_code') or '').strip() for m in mapping}
         md_text = output_md.read_text(encoding='utf-8')
-        # Replace lines under '### Recommended Courses' with inline codes where possible
+
         def replace_block(match):
             block = match.group(1)
-            lines = [ln for ln in block.splitlines() if ln.strip()]
+            block_lines = [ln for ln in block.splitlines() if ln.strip()]
             out_lines = []
-            for ln in lines:
+            for ln in block_lines:
                 ln_clean = re.sub(r"^\s*[-*\d\.\)]+\s*", '', ln).strip()
                 code = rec_to_code.get(ln_clean)
                 if code:
@@ -353,21 +353,20 @@ try:
             return '\n'.join(out_lines)
 
         md_new = re.sub(r"###\s*Recommended Courses([\s\S]*?)(?:\n###|\n\n---|$)", lambda m: "### Recommended Courses\n\n" + replace_block(m) + "\n\n", md_text, flags=re.IGNORECASE)
-        inline_file = output_md.with_name(output_md.stem + '_inline_codes' + output_md.suffix)
-        inline_file.write_text(md_new, encoding='utf-8')
-        print(f"Wrote inline-coded recommendation to {inline_file.resolve()}")
+        output_md.write_text(md_new, encoding='utf-8')
+        print(f"Updated original recommendation file with inline codes: {output_md.resolve()}")
     except Exception as e:
         print(f"Failed to create inline-coded markdown: {e}")
-    # Second-pass: more robust line-by-line replacement (v2)
-    try:
-        # Always attempt v2 inline insertion. If `mapping` is empty, build a fallback mapping
-        # by extracting the Recommended Courses block from the saved markdown and fuzzy-matching
-        # each line against the local courses_data.
-        lines = md_text.splitlines()
 
-        if not mapping:
+    # Second-pass: more robust line-by-line replacement (v2). This builds a fallback mapping
+    # from the saved markdown if the in-memory mapping is empty, then inserts codes inline.
+    try:
+        md_text2 = output_md.read_text(encoding='utf-8')
+        lines = md_text2.splitlines()
+
+        if not (mapping and any(m.get('matched_code') for m in mapping)):
+            # build candidate lookup from courses_data
             import difflib
-            # Normalize courses_data to list of candidates
             if isinstance(courses_data, dict):
                 lists = [v for v in courses_data.values() if isinstance(v, list)]
                 candidates = lists[0] if lists else []
@@ -388,13 +387,19 @@ try:
                     candidate_titles.append(key)
                     title_to_course[key] = c
 
-            # locate Recommended Courses block indices
+            # find Recommended Courses or Course Roadmaps block
             start_idx = None
             end_idx = None
             for i, ln in enumerate(lines):
                 if re.match(r"^###\s*Recommended Courses", ln, flags=re.IGNORECASE):
                     start_idx = i
                     break
+            if start_idx is None:
+                for i, ln in enumerate(lines):
+                    if re.match(r"^###\s*(Course Roadmaps|Course Roadmap)", ln, flags=re.IGNORECASE):
+                        start_idx = i
+                        break
+
             if start_idx is not None:
                 for j in range(start_idx+1, len(lines)):
                     if re.match(r"^###\s", lines[j]):
@@ -408,7 +413,6 @@ try:
                 if end_idx is None:
                     end_idx = len(lines)
 
-                # extract recommendation lines and fuzzy-match to build mapping
                 rec_lines = []
                 for k in range(start_idx+1, end_idx):
                     ln = lines[k].strip()
@@ -422,72 +426,71 @@ try:
                 for rec in rec_lines:
                     found = None
                     rec_low = rec.lower()
-                    # exact match
                     for key in title_to_course:
                         if key.lower() == rec_low:
                             found = title_to_course[key]
                             break
-                    # substring
                     if not found:
                         for key in title_to_course:
                             if rec_low in key.lower() or key.lower() in rec_low:
                                 found = title_to_course[key]
                                 break
-                    # fuzzy
                     if not found and candidate_titles:
                         best = difflib.get_close_matches(rec, candidate_titles, n=1, cutoff=0.6)
                         if best:
                             found = title_to_course.get(best[0])
 
                     matched_code = ''
-                    matched_title = ''
                     if found:
                         matched_code = (found.get('course_code') or found.get('code') or found.get('subject') or '')
-                        matched_title = (found.get('title') or found.get('name') or '')
-                    new_mapping.append({'recommended': rec, 'matched_code': matched_code, 'matched_title': matched_title})
+                    new_mapping.append({'recommended': rec, 'matched_code': matched_code})
 
                 mapping = new_mapping
 
-        # Now perform line replacements using `mapping` (whether original or fallback)
-        # find Recommended Courses indices (recompute to be safe)
-        start_idx = None
-        end_idx = None
-        for i, ln in enumerate(lines):
-            if re.match(r"^###\s*Recommended Courses", ln, flags=re.IGNORECASE):
-                start_idx = i
-                break
-        if start_idx is not None:
-            for j in range(start_idx+1, len(lines)):
-                if re.match(r"^###\s", lines[j]):
-                    end_idx = j
+        # perform replacements using mapping
+        if mapping:
+            # recompute indices in case text changed
+            start_idx = None
+            end_idx = None
+            for i, ln in enumerate(lines):
+                if re.match(r"^###\s*Recommended Courses", ln, flags=re.IGNORECASE):
+                    start_idx = i
                     break
-            if end_idx is None:
+            if start_idx is None:
+                for i, ln in enumerate(lines):
+                    if re.match(r"^###\s*(Course Roadmaps|Course Roadmap)", ln, flags=re.IGNORECASE):
+                        start_idx = i
+                        break
+            if start_idx is not None:
                 for j in range(start_idx+1, len(lines)):
-                    if lines[j].strip().startswith('---'):
+                    if re.match(r"^###\s", lines[j]):
                         end_idx = j
                         break
-            if end_idx is None:
-                end_idx = len(lines)
+                if end_idx is None:
+                    for j in range(start_idx+1, len(lines)):
+                        if lines[j].strip().startswith('---'):
+                            end_idx = j
+                            break
+                if end_idx is None:
+                    end_idx = len(lines)
 
-            for k in range(start_idx+1, end_idx):
-                line = lines[k]
-                # only modify bullet or numbered lines
-                if not re.search(r"^\s*([*\-]|\d+\.)", line):
-                    continue
-                for m in mapping:
-                    rec = m.get('recommended', '')
-                    code = (m.get('matched_code') or '').strip()
-                    if not rec or not code:
+                for k in range(start_idx+1, end_idx):
+                    line = lines[k]
+                    if not re.search(r"^\s*([*\-]|\d+\.)", line):
                         continue
-                    if rec.lower() in line.lower():
-                        if code not in line:
-                            lines[k] = line.rstrip() + f" ({code})"
-                        break
+                    for m in mapping:
+                        rec = m.get('recommended', '')
+                        code = (m.get('matched_code') or '').strip()
+                        if not rec or not code:
+                            continue
+                        if rec.lower() in line.lower():
+                            if code not in line:
+                                lines[k] = line.rstrip() + f" ({code})"
+                            break
 
         md_v2 = '\n'.join(lines)
-        inline_v2 = output_md.with_name(output_md.stem + '_inline_codes_v2' + output_md.suffix)
-        inline_v2.write_text(md_v2, encoding='utf-8')
-        print(f"Wrote robust inline-coded recommendation to {inline_v2.resolve()}")
+        output_md.write_text(md_v2, encoding='utf-8')
+        print(f"Updated original recommendation file with v2 inline codes: {output_md.resolve()}")
     except Exception as e:
         print(f"Failed to create v2 inline-coded markdown: {e}")
 except Exception as e:
