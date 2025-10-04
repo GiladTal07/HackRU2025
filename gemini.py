@@ -6,24 +6,21 @@ load_dotenv()
 from google import genai
 from google.genai import types
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-if GEMINI_API_KEY:
-    os.environ["GOOGLE_API_KEY"] = GEMINI_API_KEY
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 # Set the Gemini API key in the environment for the client
 
 # 1️⃣ Make sure you set your API key beforehand:
 # export GOOGLE_API_KEY="your_api_key_here"
 # or set it in code (not recommended for production):
 
-client = genai.Client()
+client = genai.Client(api_key="AIzaSyD3ksfBGLU5IcK2rysSqbEKUTaR5kF-QAA")
 
 # 2️⃣ Path to your resume file
 resume_path = "Resume.pdf"
 
 # 3️⃣ Extract text from the PDF file
 import PyPDF2
+
 with open(resume_path, "rb") as f:
     reader = PyPDF2.PdfReader(f)
     resume_text = "\n".join(page.extract_text() or "" for page in reader.pages)
