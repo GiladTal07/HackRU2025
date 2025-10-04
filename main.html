@@ -40,12 +40,16 @@
                     <div class="puf-section p-3 mb-4">
                         <div class="row align-items-center">
                             <div class="col-auto mx-auto">
-                                <button class="btn btn-primary" onclick="showPopup()">Upload Resume</button>
+                                <form id="resumeForm" enctype="multipart/form-data">
+                                    <input type="file" id="resumeInput" name="resume" accept=".pdf,.doc,.docx" class="form-control mb-2" required />
+                                    <button type="submit" class="btn btn-primary">Upload Resume</button>
+                                </form>
                             </div>
                         </div>
                         <!-- Popup that appears below the button -->
                         <div id="popup" class="alert alert-info mt-3" style="display: none;">
-                            <strong>Button pressed!</strong>
+                            <strong id="popupMsg">Button pressed!</strong>
+                            <p id="ai_response">Processing...</p>
                         </div>
                     </div>
 
@@ -73,14 +77,50 @@
     
     <!-- Custom JavaScript -->
     <script>
-        function showPopup() {
+        document.getElementById('resumeForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const input = document.getElementById('resumeInput');
             const popup = document.getElementById('popup');
-            if (popup.style.display === 'none') {
+            const popupMsg = document.getElementById('popupMsg');
+            const ai_response = document.getElementById('ai_response');
+            if (input.files.length === 0) {
+                popupMsg.textContent = 'No file selected!';
                 popup.style.display = 'block';
-            } else {
-                popup.style.display = 'none';
+                return;
             }
-        }
+            const formData = new FormData();
+            formData.append('resume', input.files[0]);
+            popupMsg.textContent = 'Uploading...';
+            popup.style.display = 'block';
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    
+                fetch('/ai_response')
+                .then(resp => resp.json())
+                .then(aiData => {
+                    ai_response.textContent = aiData.response || "No AI response returned.";
+                })
+                .catch(err => {
+                    ai_response.textContent = "Error fetching AI response.";
+                    console.error(err);
+                });
+
+                    popupMsg.textContent = `Uploaded: ${data.filename}`;
+
+                } else {
+                    popupMsg.textContent = data.error || 'Upload failed.';
+                }
+            })
+            .catch(() => {
+                popupMsg.textContent = 'Upload failed.';
+            });
+        
+        });
     </script>
 </body>
 </html>
