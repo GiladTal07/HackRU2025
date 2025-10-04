@@ -1,0 +1,252 @@
+[
+    {
+        "id": "01-198-103",
+        "title": "Introduction to Computer Skills",
+        "description": ""
+    },
+    {
+        "id": "01-198-105",
+        "title": "Great Insights in Computer Science",
+        "description": ""
+    },
+    {
+        "id": "01-198-107",
+        "title": "Computing for Math and the Sciences",
+        "description": ""
+    },
+    {
+        "id": "01-198-110",
+        "title": "Principles of Computer Science",
+        "description": ""
+    },
+    {
+        "id": "01-198-111",
+        "title": "Introduction to Computer Science",
+        "description": ""
+    },
+    {
+        "id": "01-198-112",
+        "title": "Data Structures",
+        "description": ""
+    },
+    {
+        "id": "01-198-142",
+        "title": "Data 101: Data Literacy",
+        "description": ""
+    },
+    {
+        "id": "01-198-143",
+        "title": "Data 101: Data Literacy - Hybrid Version*",
+        "description": ""
+    },
+    {
+        "id": "01-198-170",
+        "title": "Computer Application for Business",
+        "description": ""
+    },
+    {
+        "id": "01-198-195",
+        "title": "Honors Seminar in Computer Science",
+        "description": ""
+    },
+    {
+        "id": "01-198-205",
+        "title": "Introduction to Discrete Structures I",
+        "description": ""
+    },
+    {
+        "id": "01-198-206",
+        "title": "Introduction to Discrete Structures II",
+        "description": ""
+    },
+    {
+        "id": "01-198-210",
+        "title": "Data management for Data Science",
+        "description": ""
+    },
+    {
+        "id": "01-198-211",
+        "title": "Computer Architecture",
+        "description": ""
+    },
+    {
+        "id": "01-198-213",
+        "title": "Software Methodology",
+        "description": ""
+    },
+    {
+        "id": "01-198-214",
+        "title": "Systems Programming",
+        "description": ""
+    },
+    {
+        "id": "01-198-310",
+        "title": "Data Science Capstone Project",
+        "description": ""
+    },
+    {
+        "id": "01-198-314",
+        "title": "Principles of Programming Languages",
+        "description": ""
+    },
+    {
+        "id": "01-198-323",
+        "title": "Numerical Analysis and Computing",
+        "description": ""
+    },
+    {
+        "id": "01-198-324",
+        "title": "Numerical Methods",
+        "description": ""
+    },
+    {
+        "id": "01-198-334",
+        "title": "Introduction to Imaging and Multimedia",
+        "description": ""
+    },
+    {
+        "id": "01-198-336",
+        "title": "Principles of Information and Data Management",
+        "description": ""
+    },
+    {
+        "id": "01-198-344",
+        "title": "Design and Analysis of Computer Algorithms",
+        "description": ""
+    },
+    {
+        "id": "01-198-345",
+        "title": "Algorithms in Society",
+        "description": ""
+    },
+    {
+        "id": "01-198-352",
+        "title": "Internet Technology",
+        "description": ""
+    },
+    {
+        "id": "01-198-405",
+        "title": "Seminar in Computers and Society",
+        "description": ""
+    },
+    {
+        "id": "01-198-411",
+        "title": "Computer Architecture II",
+        "description": ""
+    },
+    {
+        "id": "01-198-415",
+        "title": "Compilers",
+        "description": ""
+    },
+    {
+        "id": "01-198-416",
+        "title": "Operating Systems Design",
+        "description": ""
+    },
+    {
+        "id": "01-198-417",
+        "title": "Distributed Systems: Concepts and Design",
+        "description": ""
+    },
+    {
+        "id": "01-198-419",
+        "title": "Computer Security",
+        "description": ""
+    },
+    {
+        "id": "01-198-424",
+        "title": "Modeling and Simulation of Continuous Systems",
+        "description": ""
+    },
+    {
+        "id": "01-198-425",
+        "title": "Brain-Inspired Computing",
+        "description": ""
+    },
+    {
+        "id": "01-198-428",
+        "title": "Introduction to Computer Graphics",
+        "description": ""
+    },
+    {
+        "id": "01-198-431",
+        "title": "Software Engineering",
+        "description": ""
+    },
+    {
+        "id": "01-198-437",
+        "title": "Database Systems Implementation",
+        "description": ""
+    },
+    {
+        "id": "01-198-439",
+        "title": "Introduction to Data Science",
+        "description": ""
+    },
+    {
+        "id": "01-198-440",
+        "title": "Introduction to Artificial Intelligence",
+        "description": ""
+    },
+    {
+        "id": "01-198-442",
+        "title": "Topics in Computer Science",
+        "description": ""
+    },
+    {
+        "id": "01-198-443",
+        "title": "Topics in Computer Science",
+        "description": ""
+    },
+    {
+        "id": "01-198-444",
+        "title": "Topics in Computer Science",
+        "description": ""
+    },
+    {
+        "id": "01-198-445",
+        "title": "Topics in Computer Science",
+        "description": ""
+    },
+    {
+        "id": "01-198-452",
+        "title": "Formal Languages and Automata",
+        "description": ""
+    },
+    {
+        "id": "01-198-460",
+        "title": "Introduction to Computational Robotics",
+        "description": ""
+    },
+    {
+        "id": "01-198-461",
+        "title": "Machine Learning Principles",
+        "description": ""
+    },
+    {
+        "id": "01-198-462",
+        "title": "Introduction to Deep Learning",
+        "description": ""
+    },
+    {
+        "id": "01-198-493",
+        "title": "Independent Study in Computer Science",
+        "description": ""
+    },
+    {
+        "id": "01-198-494",
+        "title": "Independent Study in Computer Science",
+        "description": ""
+    },
+    {
+        "id": "01-198-495",
+        "title": "Honors Capstone 1",
+        "description": ""
+    },
+    {
+        "id": "01-198-496",
+        "title": "Honors Capstone 2",
+        "description": ""
+    }
+]
