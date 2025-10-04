@@ -1,5 +1,5 @@
 Flask
-subprocess
+subprocess.run
 pathlib
 google.genai
 dotenv
