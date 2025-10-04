@@ -20,6 +20,7 @@ resume_path = "Resume.pdf"
 
 # 3️⃣ Extract text from the PDF file
 import PyPDF2
+
 with open(resume_path, "rb") as f:
     reader = PyPDF2.PdfReader(f)
     resume_text = "\n".join(page.extract_text() or "" for page in reader.pages)
